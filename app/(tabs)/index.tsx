@@ -1,74 +1,138 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, Text, View,Pressable } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { HelloWave } from "@/components/HelloWave";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import templeLogo from "@/assets/images/temple.png";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
+import { searchHeadings } from "@/constants/search";
+import SearchLocation from "@/components/Search/SearchLocation";
+import DatePiker from "@/components/Search/DatePiker";
+import RoomFilter from "@/components/Search/RoomFilter";
 
 export default function HomeScreen() {
+  const [activeContent, setActiveContent] = useState(1);
+  const [showeSearch, setShowSearch] = useState(false);
+
+  const handlePress=()=>{
+    setShowSearch(true)
+    console.log("pressed")
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <StatusBar style={"dark"} />
+      <LinearGradient
+        colors={["rgba(246, 166, 166, 0.3)", "rgba(166, 217, 246, 0.3)"]}
+        style={StyleSheet.absoluteFill}
+      />
+      <View style={styles.logo}>
+        <Image style={styles.img} source={templeLogo} />
+      </View>
+      <View style={styles.headingContainer}>
+        {searchHeadings.map((heading, index) => (
+          <Text
+            key={index}
+            onPress={() => setActiveContent(index + 1)}
+            style={[
+              styles.heading,
+              activeContent === index + 1 && styles.activeHeading,
+            ]}
+          >
+            {heading.name}
+          </Text>
+        ))}
+      </View>
+      <Pressable style={showeSearch ? styles.contentContainer1 :styles.contentContainer} >
+        <SearchLocation activeContent={activeContent} onPress={handlePress}  />
+        <DatePiker/>
+        <RoomFilter/>
+
+      </Pressable>
+        {/* {activeContent === 1 && (
+            <Text style={styles.content}>About Us content here...</Text>
+          )}
+          {activeContent === 2 && (
+            <Text style={styles.content}>Services content here...</Text>
+          )}
+          {activeContent === 3 && (
+            <Text style={styles.content}>Products content here...</Text>
+          )}
+          {activeContent === 4 && (
+            <Text style={styles.content}>Contact content here...</Text>
+          )} */}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    backgroundColor: "white",
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  logo: {
+    position: "absolute",
+    top: 50,
+    left: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  img: {
+    width: 130,
+    height: 100,
+    resizeMode: "contain",
+  },
+  headingContainer: {
+    flexDirection: "row",
+    marginTop: 140,
+    gap: 35,
+    // borderColor:"red",
+    justifyContent: "center",
+    // borderWidth:1
+  },
+  heading: {
+    fontSize: 18,
+    marginVertical: 10,
+    color: "#666",
+    // borderColor: '#ccc',
+    // borderWidth: 1,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    // borderRadius:50
+  },
+  activeHeading: {
+    color: "#000",
+    fontWeight: "bold",
+    borderBottomColor: "#000",
+    borderBottomWidth: 2,
+  },
+  contentContainer1: {
+    // borderColor: "#ccc",
+    // borderWidth: 1,
+    // height: "40%",
+    overflow: "hidden",
+    gap: 10,
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: "white",
+    marginHorizontal: 20,
+    borderRadius: 10,
+  },
+  contentContainer: {
+    // borderColor: "#ccc",
+    // borderWidth: 1,
+    height: "5.5%",
+    overflow: "hidden",
+    marginTop: 20,
+    // padding: 20,
+    backgroundColor: "white",
+    marginHorizontal: 20,
+    borderRadius: 10,
+  },
+  content: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#333",
   },
 });
